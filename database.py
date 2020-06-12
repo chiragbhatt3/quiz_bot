@@ -2,6 +2,7 @@ import pandas as pd
 import mysql.connector as mariadb
 import credentials
 
+
 mariadb_connection = mariadb.connect(user=credentials.USER_NAME,
                                      password=credentials.PASSWORD,
                                      database=credentials.DB_NAME,
@@ -18,17 +19,16 @@ cursor.execute(data_query)
 quiz_data = cursor.fetchall()
 quiz_data_pd = pd.DataFrame(quiz_data, columns=['Question', 'A', 'B', 'C', 'D', 'Correct', 'Code'])
 
-data = pd.DataFrame()
-quiz_size = data.shape[0]
-user_input = pd.DataFrame()
+user_query = "SELECT * FROM user_data"
+cursor.execute(user_query)
+user_data = cursor.fetchall()
+user_data_pd = pd.DataFrame(user_data, columns=['Phone', 'Name', 'Code', 'Start', 'End', 'time', 'points','format'])
+
+user_info_query = "SELECT * FROM user_info"
+cursor.execute(user_info_query)
+user_info = cursor.fetchall()
+user_info_pd = pd.DataFrame(user_info, columns=['Phone', 'Name'])
 
 
-
-def quiz_set_fun(code):
-    global data
-    global quiz_size
-    global user_input
-    data = quiz_data_pd[(quiz_data_pd.Code == code)]
-    quiz_size = data.shape[0]
-    user_input = pd.DataFrame(list(zip(["NA"]*quiz_size,[False]*quiz_size,[0]*quiz_size)),columns =['Answer','Result','Time'])
-    user_input['Correct'] = data['Correct'].values
+cursor.close()
+mariadb_connection.close()
