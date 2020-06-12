@@ -10,7 +10,7 @@ ui <- fluidPage(
       fileInput("file", "Upload the csv file"),
       textInput("quiz_name","Quiz",placeholder = "type here the name of the quiz"),
       textInput("qm_name","Quiz Master",placeholder = "type here the name of the quiz master"),
-      textInput("marking_scheme","please type the marking scheme in the format +a/-b",placeholder = "+3/-1"),
+      textInput("marking_scheme","please type the marking scheme in the format +a/-b",placeholder = "+3/-1",value = "+3/-1"),
       actionButton("go", "Upload quiz",style="width:100% !important;")
     ),
     mainPanel(
@@ -48,7 +48,7 @@ server <- function(input, output) {
            qm_name() %>% substring(1, 1) %>% toupper())
   })
   quiz_table <- reactive({
-    req(input$file$datapath) %>% read_csv() %>%  as_tibble() -> a
+    req(input$file$datapath) %>% read_csv() %>%  as.tibble() -> a
     colnames(a) <-(c("Question", "A", "B", "C", "D","Correct"))
     a %>%
       mutate(quiz_name = quiz_title(),
@@ -56,8 +56,7 @@ server <- function(input, output) {
              quiz_code = quiz_code(),
              positive_marks = positive_marks(),
              negative_marks = negative_marks(),
-             upload_date = upload_date()) -> a
-    a
+             upload_date = upload_date())
   })
   
   output$input_file <- DT::renderDataTable({
@@ -68,8 +67,8 @@ server <- function(input, output) {
     c1 <- c("Quiz","Quiz Master","Quiz Code","Marking Scheme")
     c2 <- c(quiz_title(),qm_name(),quiz_code(),marking())
     c1 %>% 
-      as_tibble() %>% 
-      cbind(c2 %>% as_tibble()) %>% 
+      as.tibble() %>% 
+      cbind(c2 %>% as.tibble()) %>% 
       datatable( rownames = F,colnames = '',
                  options = list(dom = 't',
                                 columnDefs = list(list(className = 'dt-center', 
@@ -101,9 +100,9 @@ server <- function(input, output) {
       dbDisconnect(con)
       showNotification("file uploaded successfully") 
     }
-
+    
   })
-
+  
 }
 
 shinyApp(ui, server)
