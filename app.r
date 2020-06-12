@@ -4,7 +4,6 @@ library(RMySQL)
 library(DBI)
 library(RMariaDB)
 library(DT)
-source("credentials.r")
 ui <- fluidPage(
   headerPanel(title = "SIRPI QUIZ BOT"),
   sidebarLayout(
